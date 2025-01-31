@@ -14,12 +14,12 @@ If the original author comes back, this mod will be removed in favor of their mo
 
 ## **Important!**
 Make sure you are not subscribed to the original Display Enemy Movement Speed mod, or this mod will not work correctly.
-
+Unsubscribing from the mod should be all that is necessary.  However, if for some reason there are issues, delete the original mod's folder located at `<Steam Director>\steamapps\workshop\content\2059170\3282796258`.
 
 
 ## Config
 To rebind the comma key toggle, go to:
-`%UserProfile%\AppData\LocalLow\Magnum Scriptum Ltd\Quasimorph_ModConfigs\QM_DisplayMovementSpeedContinued.json`
+`%UserProfile%\AppData\LocalLow\Magnum Scriptum Ltd\Quasimorph_ModConfigs\QM_DisplayMovementSpeedContinued\config.json`
 and change "Comma" [with a Unity Keycode of your choice (scroll down to the Properties section)](https://docs.unity3d.com/ScriptReference/KeyCode.html).
 
 
