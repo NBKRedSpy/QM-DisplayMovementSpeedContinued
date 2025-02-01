@@ -1,14 +1,14 @@
 ﻿using HarmonyLib;
 using MGSC;
-using UnityEngine;
-using System.Collections.Generic;
-using System.Reflection;
-using TMPro;
-using System.IO;
 using System;
-
-using TinyJson;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using TinyJson;
+using TMPro;
+using UnityEngine;
+
 namespace QM_DisplayMovementSpeedContinued
 {
     public class Plugin
@@ -18,6 +18,14 @@ namespace QM_DisplayMovementSpeedContinued
         public static bool show = true;
 
         public static ConfigDirectories ModDirectories = new ConfigDirectories();
+
+        // New
+        public static GameObject uiPrefab;
+        public static APUiController apController;
+
+        public static string RootFolder => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+        #region MGSC Hooks
 
         [Hook(ModHookType.AfterBootstrap)]
         public static void Bootstrap(IModContext context)
@@ -63,6 +71,31 @@ namespace QM_DisplayMovementSpeedContinued
             harmony.PatchAll();
         }
 
+        // New
+        [Hook(ModHookType.DungeonStarted)]
+        public static void SpawnUI(IModContext context)
+        {
+            var canvasRoot = GameObject.FindObjectOfType<DungeonUI>().transform;
+            apController = GameObject.FindObjectOfType<APUiController>();
+            uiPrefab = DataLoader.LoadFileFromBundle<GameObject>("apcontrollerbundle", "ControllerPrefab");
+            if (uiPrefab == null)
+            {
+                Debug.LogError($"Could not spawn, UI PREFAB is null");
+            }
+            else if (canvasRoot != null && apController == null)
+            {
+                apController = GameObject.Instantiate(uiPrefab, canvasRoot).AddComponent<APUiController>();
+                apController.LoadComponents("apcontrollerbundle");
+                apController.name = $"[UI] AP Controller";
+                apController.DisableUI();
+                Debug.Log($"UI for APController has instantiated correctly");
+            }
+            else
+            {
+                Debug.LogError($"unsupported error?");
+            }
+        }
+
         [Hook(ModHookType.DungeonUpdateBeforeGameLoop)]
         public static void DungeonUpdateBeforeGameLoop(IModContext context)
         {
@@ -72,10 +105,11 @@ namespace QM_DisplayMovementSpeedContinued
             }
 
         }
+        #endregion
 
         public static void createText(Monster __instance)
         {
-            
+
             GameObject monsterGameObject = __instance.Creature3dView.gameObject;
 
             if (monsterGameObject.GetComponent<HideTextMesh>() != null)
@@ -102,6 +136,20 @@ namespace QM_DisplayMovementSpeedContinued
             text.outlineWidth = 0.3f;
 
             HideTextMesh hider = __instance.Creature3dView.gameObject.AddComponent<HideTextMesh>();
+        }
+
+        // New
+        public static void UpdateUI(CellPosition mapCell, ObjHighlightController __instance)
+        {
+            Monster monster = __instance._creatures.GetMonster(mapCell.X, mapCell.Y);
+            if (monster != null)
+            {
+                apController.SetEnemy(monster, monster.transform.position);
+            }
+            else
+            {
+                apController.DisableUI();
+            }
         }
 
         public static void UpdateText(Monster __instance)
@@ -150,6 +198,16 @@ namespace QM_DisplayMovementSpeedContinued
     }
 
 
+    // Custom new patch for UI
+    [HarmonyPatch(typeof(ObjHighlightController), nameof(ObjHighlightController.Process))]
+    public static class Patch_ObjHighlightController_Process
+    {
+        public static void Postfix(CellPosition cellUnderCursor, ObjHighlightController __instance)
+        {
+            Plugin.UpdateUI(cellUnderCursor, __instance);
+        }
+    }
+
     [HarmonyPatch(typeof(Monster), nameof(Monster.ProcessDamage))]
     public static class Patch_ProcessDamage
     {
@@ -181,7 +239,7 @@ namespace QM_DisplayMovementSpeedContinued
         }
     }
 
-    [HarmonyPatch(typeof(Monster), nameof(Monster.UpdateVisibility), new Type[]{})]
+    [HarmonyPatch(typeof(Monster), nameof(Monster.UpdateVisibility), new Type[] { })]
     public static class Patch_CreatureViewOnVisualRefreshed
     {
         public static void Postfix(Monster __instance)

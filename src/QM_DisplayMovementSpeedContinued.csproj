@@ -14,6 +14,7 @@
 		<GAME_PATH Condition="!Exists('$(GAME_PATH)') AND '$(_SteamLibraryPath)' != ''">$(_SteamLibraryPath)\steamapps\common\$(GAME_NAME)</GAME_PATH>
 		<GAME_PATH Condition="!Exists('$(GAME_PATH)')">C:\Program Files\Steam\steamapps\common\$(GAME_NAME)</GAME_PATH>
 		<GAME_PATH Condition="!Exists('$(GAME_PATH)')">C:\Program Files (x86)\Steam\steamapps\common\$(GAME_NAME)</GAME_PATH>
+		<GAME_PATH Condition="!Exists('$(GAME_PATH)')">D:\SteamLibrary\steamapps\common\$(GAME_NAME)</GAME_PATH>
 	</PropertyGroup>
 	<PropertyGroup>
 		<WorkshopPath>$(GAME_PATH)\..\..\workshop\content\2059170\$(SteamId)\</WorkshopPath>
@@ -33,6 +34,9 @@
 			<SpecificVersion>False</SpecificVersion>
 			<HintPath>$(ManagedPath)Unity.TextMeshPro.dll</HintPath>
 		</Reference>
+		<Reference Include="UnityEngine.AssetBundleModule">
+		  <HintPath>$(ManagedPath)UnityEngine.AssetBundleModule.dll</HintPath>
+		</Reference>
 		<Reference Include="UnityEngine.UI, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 			<SpecificVersion>False</SpecificVersion>
 			<HintPath>$(ManagedPath)UnityEngine.UI.dll</HintPath>
@@ -50,6 +54,9 @@
 		<Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 			<SpecificVersion>False</SpecificVersion>
 			<HintPath>$(ManagedPath)UnityEngine.TextRenderingModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UIModule">
+		  <HintPath>$(ManagedPath)UnityEngine.UIModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>
