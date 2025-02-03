@@ -66,6 +66,8 @@ namespace QM_DisplayMovementSpeedContinued
                 return;
             }
 
+            if (!monster.IsSeenByPlayer) return;
+
             if (Camera.main != null)
             {
                 // Set object world pos to UI!
@@ -86,12 +88,11 @@ namespace QM_DisplayMovementSpeedContinued
             if (lastMonster == null || monster != lastMonster)
             {
                 AttachToNewMonster(monster);
+                ChangeSprite(monster);
             }
 
             HealthBar.fillAmount = monster.CreatureData.Health.Percent;
-            APTextObject.text = $"{monster.ActionPointsLeft}/{monster.ActionPoints}";
-
-            ChangeSprite(monster);
+            APTextObject.text = $"{monster.ActionPointsLeft}";  //$"{monster.ActionPointsLeft}/{monster.ActionPoints}";
 
             EnableUI();
         }
@@ -136,6 +137,16 @@ namespace QM_DisplayMovementSpeedContinued
         private void EnableUI()
         {
             this.Root.gameObject.SetActive(true);
+        }
+
+        private void HookToUI()
+        {
+            // Here we register to events of the UI that hide all other components
+        }
+
+        private void UnhookToUI()
+        {
+            
         }
 
         private void OnAttachedDead()

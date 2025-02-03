@@ -152,6 +152,14 @@ namespace QM_DisplayMovementSpeedContinued
             }
         }
 
+        public static void ForceDisableUI()
+        {
+            if(apController!= null)
+            {
+                apController.DisableUI();
+            }
+        }
+
         public static void UpdateText(Monster __instance)
         {
             //After taking damage, update the label in case the enemy lost their weapon due to amputation.
@@ -216,6 +224,16 @@ namespace QM_DisplayMovementSpeedContinued
             Plugin.UpdateText(__instance);
         }
 
+    }
+
+    [HarmonyPatch(typeof(ObjHighlightController), nameof(ObjHighlightController.Unhighlight))]
+    public static class Patch_ObjHighlightController_Unhighlight
+    {
+        public static void Postfix()
+        {
+            // Test?
+            Plugin.ForceDisableUI();
+        }
     }
 
 
