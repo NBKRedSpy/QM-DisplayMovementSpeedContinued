@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace QM_DisplayMovementSpeedContinued
 {
-    public class APUiController : MonoBehaviour
+    public class DisplayMovementController : MonoBehaviour
     {
         [Header("Manual adjusting")]
         public Vector3 Adjustment = new Vector3(0f, 0.2f, 0f);
@@ -137,16 +137,6 @@ namespace QM_DisplayMovementSpeedContinued
         private void EnableUI()
         {
             this.Root.gameObject.SetActive(true);
-        }
-
-        private void HookToUI()
-        {
-            // Here we register to events of the UI that hide all other components
-        }
-
-        private void UnhookToUI()
-        {
-            
         }
 
         private void OnAttachedDead()

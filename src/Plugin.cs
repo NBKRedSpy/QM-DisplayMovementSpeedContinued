@@ -21,7 +21,7 @@ namespace QM_DisplayMovementSpeedContinued
 
         // New
         public static GameObject uiPrefab;
-        public static APUiController apController;
+        public static DisplayMovementController uiController;
 
         public static string RootFolder => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -76,19 +76,19 @@ namespace QM_DisplayMovementSpeedContinued
         public static void SpawnUI(IModContext context)
         {
             var canvasRoot = GameObject.FindObjectOfType<DungeonUI>().transform;
-            apController = GameObject.FindObjectOfType<APUiController>();
+            uiController = GameObject.FindObjectOfType<DisplayMovementController>();
             uiPrefab = DataLoader.LoadFileFromBundle<GameObject>("apcontrollerbundle", "ControllerPrefab");
             if (uiPrefab == null)
             {
                 Debug.LogError($"Could not spawn, UI PREFAB is null");
             }
-            else if (canvasRoot != null && apController == null)
+            else if (canvasRoot != null && uiController == null)
             {
-                apController = GameObject.Instantiate(uiPrefab, canvasRoot).AddComponent<APUiController>();
-                apController.LoadComponents("apcontrollerbundle");
-                apController.name = $"[UI] AP Controller";
-                apController.DisableUI();
-                Debug.Log($"UI for APController has instantiated correctly");
+                uiController = GameObject.Instantiate(uiPrefab, canvasRoot).AddComponent<DisplayMovementController>();
+                uiController.LoadComponents("apcontrollerbundle");
+                uiController.name = $"[UI] DisplayMovement Controller";
+                uiController.DisableUI();
+                Debug.Log($"UI for DisplayMovement Controller has instantiated correctly");
             }
             else
             {
@@ -96,47 +96,7 @@ namespace QM_DisplayMovementSpeedContinued
             }
         }
 
-        [Hook(ModHookType.DungeonUpdateBeforeGameLoop)]
-        public static void DungeonUpdateBeforeGameLoop(IModContext context)
-        {
-            if (InputHelper.GetKeyDown(toggleKey))
-            {
-                show = !show;
-            }
-
-        }
         #endregion
-
-        public static void createText(Monster __instance)
-        {
-
-            GameObject monsterGameObject = __instance.Creature3dView.gameObject;
-
-            if (monsterGameObject.GetComponent<HideTextMesh>() != null)
-            {
-                return;
-            }
-
-            GameObject textGameObject = new GameObject(MoveSpeedTextId);
-
-            textGameObject.transform.SetParent(monsterGameObject.transform);
-            textGameObject.transform.localPosition = new Vector3(0.1f, 0.1f, -1);
-
-            textGameObject.AddComponent(typeof(TextMeshPro));
-
-            TextMeshPro text = textGameObject.GetComponent<TextMeshPro>();
-
-            text.text = GetLabelText(__instance);
-            text.fontSize = 1f;
-            text.fontStyle = FontStyles.Bold;
-            text.lineSpacing = 1;
-            text.alignment = TMPro.TextAlignmentOptions.Center;
-            text.color = Color.white;
-            text.outlineColor = Color.black;
-            text.outlineWidth = 0.3f;
-
-            HideTextMesh hider = __instance.Creature3dView.gameObject.AddComponent<HideTextMesh>();
-        }
 
         // New
         public static void UpdateUI(CellPosition mapCell, ObjHighlightController __instance)
@@ -144,67 +104,22 @@ namespace QM_DisplayMovementSpeedContinued
             Monster monster = __instance._creatures.GetMonster(mapCell.X, mapCell.Y);
             if (monster != null)
             {
-                apController.SetEnemy(monster, monster.transform.position);
+                uiController.SetEnemy(monster, monster.transform.position);
             }
             else
             {
-                apController.DisableUI();
+                uiController.DisableUI();
             }
         }
 
         public static void ForceDisableUI()
         {
-            if(apController!= null)
+            if(uiController!= null)
             {
-                apController.DisableUI();
+                uiController.DisableUI();
             }
         }
-
-        public static void UpdateText(Monster __instance)
-        {
-            //After taking damage, update the label in case the enemy lost their weapon due to amputation.
-            Component moveComponent = __instance.Creature3dView.gameObject.GetComponentsInChildren(typeof(TMPro.TextMeshPro))
-                .ToList()
-                .SingleOrDefault(x => x.name == Plugin.MoveSpeedTextId);
-
-            TextMeshPro label = moveComponent?.GetComponent<TextMeshPro>();
-
-            if (label != null)
-            {
-                label.text = Plugin.GetLabelText(__instance);
-            }
-        }
-        public static string GetLabelText(Monster monster)
-        {
-            Inventory inventory = monster.CreatureData.Inventory;
-
-            bool hasRanged = false;
-
-            List<string> weaponsList = new List<string>();
-
-            if (inventory != null)
-            {
-                //Assuming that if one ranged weapon is found, it's ranged.
-                //Ignoring turrets since they will never be melee.
-
-                hasRanged = inventory.WeaponSlots
-                    .Any(x => x.Items
-                        .Any(y => y?.Record<WeaponRecord>()?.IsMelee == false)
-                    );
-
-                weaponsList = inventory.WeaponSlots
-                    .SelectMany(x =>
-                        x.Items
-                            .Select(y => y.Record<WeaponRecord>().Id)
-                            )
-                    .ToList();
-            }
-
-            return $"{monster.ActionPointsLeft + monster.ActionPointsProcessed}{(hasRanged ? "" : "M")}";
-        }
-
     }
-
 
     // Custom new patch for UI
     [HarmonyPatch(typeof(ObjHighlightController), nameof(ObjHighlightController.Process))]
@@ -216,16 +131,6 @@ namespace QM_DisplayMovementSpeedContinued
         }
     }
 
-    [HarmonyPatch(typeof(Monster), nameof(Monster.ProcessDamage))]
-    public static class Patch_ProcessDamage
-    {
-        public static void Postfix(Monster __instance)
-        {
-            Plugin.UpdateText(__instance);
-        }
-
-    }
-
     [HarmonyPatch(typeof(ObjHighlightController), nameof(ObjHighlightController.Unhighlight))]
     public static class Patch_ObjHighlightController_Unhighlight
     {
@@ -235,35 +140,4 @@ namespace QM_DisplayMovementSpeedContinued
             Plugin.ForceDisableUI();
         }
     }
-
-
-    //Debug - Attempt at handling the initialize
-
-    [HarmonyPatch(typeof(Monster), nameof(Monster.Configure3dView))]
-    public static class Monster_Patch_Configure3dView
-    {
-        public static void Postfix(Monster __instance)
-        {
-            Plugin.createText(__instance);
-        }
-    }
-
-    [HarmonyPatch(typeof(Monster), nameof(Monster.Mutate))]
-    public static class Patch_OnMutate
-    {
-        public static void Postfix(Monster __instance)
-        {
-            Plugin.createText(__instance);
-        }
-    }
-
-    [HarmonyPatch(typeof(Monster), nameof(Monster.UpdateVisibility), new Type[] { })]
-    public static class Patch_CreatureViewOnVisualRefreshed
-    {
-        public static void Postfix(Monster __instance)
-        {
-            Plugin.UpdateText(__instance);
-        }
-    }
-
 }
