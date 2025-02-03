@@ -32,6 +32,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StagingPaths:
   - <APControllerModPath>
+  - <APControllerWorkshopPath>
   assetBundles:
   - assetBundleName: apControllerBundle
     assets:
@@ -73,5 +74,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StagingPaths:
   - <APControllerModPath>
+  - <APControllerWorkshopPath>
   definitions:
   - {fileID: 5897886265953266890, guid: e1c58dc6891d4fa4aad6d01c2b816ef0, type: 3}
