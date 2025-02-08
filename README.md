@@ -2,7 +2,6 @@
 ![Melee and ranged text example](./media/thumbnail.png)
 
 # Functionality
-
 For the people constantly right clicking on enemies to not get owned by 3AP melee goons. 
 Shows the amount of action points an enemy can spend. If the enemy is melee only, an 'M' will also be displayed.
 
@@ -11,6 +10,11 @@ Toggleable with the comma key, rebindable with a config file.
 # Continued Notes
 This is a continuation of GitHub user [jamsge's](https://github.com/jamsge) fantastic mod of the same name.
 If the original author comes back, this mod will be removed in favor of their mod listing.
+
+# Alternative Version
+Cryano has made a version with improved graphics and additional information.  
+It can be found here: [Display Enemy Movement Speed Continued - UI [Hover Version]](https://steamcommunity.com/sharedfiles/filedetails/?id=3422733738).
+Note that only one "Display Enemy Movement Speed" mod can be run at a time.
 
 ## **Important!**
 Make sure you are not subscribed to the original Display Enemy Movement Speed mod, or this mod will not work correctly.
@@ -22,6 +26,8 @@ To rebind the comma key toggle, go to:
 `%UserProfile%\AppData\LocalLow\Magnum Scriptum Ltd\Quasimorph_ModConfigs\QM_DisplayMovementSpeedContinued\config.json`
 and change "Comma" [with a Unity Keycode of your choice (scroll down to the Properties section)](https://docs.unity3d.com/ScriptReference/KeyCode.html).
 
+# Text Issue
+There is a known issue where the text might be slightly covered or discolored. This is due to a change in how 0.8.5 renders units and may be addressed in future game updates.
 
 ## Source
 https://github.com/NBKRedSpy/QM-DisplayMovementSpeedContinued
