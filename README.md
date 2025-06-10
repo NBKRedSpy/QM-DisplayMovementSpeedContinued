@@ -12,14 +12,12 @@ This is a continuation of GitHub user [jamsge's](https://github.com/jamsge) fant
 If the original author comes back, this mod will be removed in favor of their mod listing.
 
 # Alternative Version
-Cryano has made a version with improved graphics and additional information.  
-It can be found here: [Display Enemy Movement Speed Continued - UI [Hover Version]](https://steamcommunity.com/sharedfiles/filedetails/?id=3422733738).
-Note that only one "Display Enemy Movement Speed" mod can be run at a time.
+Cryano has made versions of this mod with improved graphics and additional information.  
 
-## **Important!**
-Make sure you are not subscribed to the original Display Enemy Movement Speed mod, or this mod will not work correctly.
-Unsubscribing from the mod should be all that is necessary.  However, if for some reason there are issues, delete the original mod's folder located at `<Steam Director>\steamapps\workshop\content\2059170\3282796258`.
+[Display Enemy Movement Speed Continued - UI [Hover Version]](https://steamcommunity.com/sharedfiles/filedetails/?id=3422733738)  
+[Display Movement Speed - UI \[Permanent Version\]](https://steamcommunity.com/sharedfiles/filedetails/?id=3426072300)  
 
+Personally I run this mod and their Hover version together.
 
 ## Config
 To rebind the comma key toggle, go to:
